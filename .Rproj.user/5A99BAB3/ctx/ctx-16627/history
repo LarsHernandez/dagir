@@ -1,0 +1,512 @@
+filter(KØN != "Total", CIVILSTAND=="Total", OMRÅDE != "All Denmark", ALDER != "Total") %>%
+filter(!(str_detect(OMRÅDE, "Region"))) %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+")),
+area = OMRÅDE) %>%
+group_by(area) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN=="Men"]),
+women      = sum(INDHOLD[KØN=="Women"]),
+pct_men    = men/population*100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))%>%
+mutate(navn = if_else(area == "Copenhagen","København",area))
+geo_kommuner2 <- left_join(geo_kommuner, data_kommuner, by="navn")
+View(data_regioner)
+# Region ------------------------------------------------------------------
+data_regioner <- FOLK1A %>%
+filter(KØN != "Total", CIVILSTAND=="Total", OMRÅDE != "All Denmark", ALDER != "Total") %>%
+filter(str_detect(OMRÅDE, "Region")) %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+")),
+navn = OMRÅDE) %>%
+group_by(navn) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN=="Men"]),
+women      = sum(INDHOLD[KØN=="Women"]),
+pct_men    = men/population*100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))
+geo_regioner2 <- left_join(geo_regioner, data_regioner, by="navn")
+View(geo_regioner2)
+library(tidyverse)
+# DAGI Data ---------------------------------------------------------------
+geo_sogne                             <- sf::read_sf("https://api.dataforsyningen.dk/sogne/?format=geojson")
+geo_regioner                          <- sf::read_sf("https://api.dataforsyningen.dk/regioner/?format=geojson")
+geo_kommuner                          <- sf::read_sf("https://api.dataforsyningen.dk/kommuner/?format=geojson")
+geo_postnumre                         <- sf::read_sf("https://api.dataforsyningen.dk/postnumre/?format=geojson")
+geo_opstillingskredse                 <- sf::read_sf("https://api.dataforsyningen.dk/opstillingskredse/?format=geojson")
+geo_afstemningsomraader               <- sf::read_sf("https://api.dataforsyningen.dk/afstemningsomraader/?format=geojson")
+geo_landsdele                         <- sf::read_sf("https://api.dataforsyningen.dk/landsdele/?format=geojson")
+geo_menighedsraadsafstemningsomraader <- sf::read_sf("https://api.dataforsyningen.dk/menighedsraadsafstemningsomraader/?format=geojson")
+geo_politikredse                      <- sf::read_sf("https://api.dataforsyningen.dk/politikredse/?format=geojson")
+geo_retskredse                        <- sf::read_sf("https://api.dataforsyningen.dk/retskredse/?format=geojson")
+geo_storkredse                        <- sf::read_sf("https://api.dataforsyningen.dk/storkredse/?format=geojson")
+geo_valglandsdele                     <- sf::read_sf("https://api.dataforsyningen.dk/valglandsdele/?format=geojson")
+geo_sogne                             <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_sogne, 'Spatial')))
+geo_regioner                          <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_regioner, 'Spatial')))
+geo_kommuner                          <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_kommuner, 'Spatial')))
+geo_postnumre                         <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_postnumre, 'Spatial')))
+geo_opstillingskredse                 <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_opstillingskredse, 'Spatial')))
+geo_afstemningsomraader               <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_afstemningsomraader, 'Spatial')))
+geo_landsdele                         <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_landsdele, 'Spatial')))
+geo_menighedsraadsafstemningsomraader <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_menighedsraadsafstemningsomraader, 'Spatial')))
+geo_politikredse                      <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_politikredse, 'Spatial')))
+geo_retskredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_retskredse, 'Spatial')))
+geo_storkredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_storkredse, 'Spatial')))
+geo_valglandsdele                     <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_valglandsdele, 'Spatial')))
+# Statistics Denmark Data -------------------------------------------------
+SOGN1 <- statsDK::sdk_retrieve_data("SOGN1", Tid = "2021")
+FOLK1A <- statsDK::sdk_retrieve_data("FOLK1A", Tid = "2021K1")
+# Parrish -----------------------------------------------------------------
+data_sogne <- SOGN1 %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+"))) %>%
+separate(SOGN,into = c("kode","SOGN"),sep=" ",extra="merge") %>%
+separate(SOGN,into = c("sogn","area","last"),sep="[\\(\\)]",extra="merge") %>%
+group_by(sogn, kode, area) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN=="Men"]),
+women      = sum(INDHOLD[KØN=="Women"]),
+pct_men    = men/population*100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))
+# County ------------------------------------------------------------------
+data_kommuner <- FOLK1A %>%
+filter(KØN != "Total", CIVILSTAND=="Total", OMRÅDE != "All Denmark", ALDER != "Total") %>%
+filter(!(str_detect(OMRÅDE, "Region"))) %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+")),
+area = OMRÅDE) %>%
+group_by(area) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN=="Men"]),
+women      = sum(INDHOLD[KØN=="Women"]),
+pct_men    = men/population*100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))%>%
+mutate(navn = if_else(area == "Copenhagen","København",area))
+# Region ------------------------------------------------------------------
+data_regioner <- FOLK1A %>%
+filter(KØN != "Total", CIVILSTAND=="Total", OMRÅDE != "All Denmark", ALDER != "Total") %>%
+filter(str_detect(OMRÅDE, "Region")) %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+")),
+navn = OMRÅDE) %>%
+group_by(navn) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN == "Men"]),
+women      = sum(INDHOLD[KØN == "Women"]),
+pct_men    = men/population * 100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))
+geo_sogne    <- left_join(geo_sogne, data_sogne, by="kode")
+geo_regioner <- left_join(geo_regioner, data_regioner, by="navn")
+geo_kommuner <- left_join(geo_kommuner, data_kommuner, by="navn")
+save(geo_sogne,geo_regioner,geo_kommuner,geo_postnumre,geo_opstillingskredse,geo_afstemningsomraader,geo_landsdele,
+geo_menighedsraadsafstemningsomraader,geo_politikredse,geo_retskredse,geo_storkredse,geo_valglandsdele,
+file = "geo_dagi.rdata")
+geo_sogne                             <- sf::read_sf("https://api.dataforsyningen.dk/sogne/?format=geojson")
+geo_regioner                          <- sf::read_sf("https://api.dataforsyningen.dk/regioner/?format=geojson")
+geo_kommuner                          <- sf::read_sf("https://api.dataforsyningen.dk/kommuner/?format=geojson")
+geo_postnumre                         <- sf::read_sf("https://api.dataforsyningen.dk/postnumre/?format=geojson")
+geo_opstillingskredse                 <- sf::read_sf("https://api.dataforsyningen.dk/opstillingskredse/?format=geojson")
+geo_afstemningsomraader               <- sf::read_sf("https://api.dataforsyningen.dk/afstemningsomraader/?format=geojson")
+geo_landsdele                         <- sf::read_sf("https://api.dataforsyningen.dk/landsdele/?format=geojson")
+geo_menighedsraadsafstemningsomraader <- sf::read_sf("https://api.dataforsyningen.dk/menighedsraadsafstemningsomraader/?format=geojson")
+geo_politikredse                      <- sf::read_sf("https://api.dataforsyningen.dk/politikredse/?format=geojson")
+geo_retskredse                        <- sf::read_sf("https://api.dataforsyningen.dk/retskredse/?format=geojson")
+geo_storkredse                        <- sf::read_sf("https://api.dataforsyningen.dk/storkredse/?format=geojson")
+geo_valglandsdele                     <- sf::read_sf("https://api.dataforsyningen.dk/valglandsdele/?format=geojson")
+geo_sogne                             <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_sogne, 'Spatial')))
+geo_regioner                          <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_regioner, 'Spatial')))
+geo_kommuner                          <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_kommuner, 'Spatial')))
+geo_postnumre                         <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_postnumre, 'Spatial')))
+geo_opstillingskredse                 <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_opstillingskredse, 'Spatial')))
+geo_afstemningsomraader               <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_afstemningsomraader, 'Spatial')))
+geo_landsdele                         <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_landsdele, 'Spatial')))
+geo_menighedsraadsafstemningsomraader <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_menighedsraadsafstemningsomraader, 'Spatial')))
+geo_politikredse                      <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_politikredse, 'Spatial')))
+geo_retskredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_retskredse, 'Spatial')))
+geo_storkredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_storkredse, 'Spatial')))
+geo_valglandsdele                     <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_valglandsdele, 'Spatial')))
+View(geo_afstemningsomraader)
+View(geo_afstemningsomraader[[24]][[1]])
+View(geo_afstemningsomraader[[24]][[9]])
+# Statistics Denmark Data -------------------------------------------------
+SOGN1 <- statsDK::sdk_retrieve_data("SOGN1", Tid = "2021")
+FOLK1A <- statsDK::sdk_retrieve_data("FOLK1A", Tid = "2021K1")
+# Parrish -----------------------------------------------------------------
+data_sogne <- SOGN1 %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+"))) %>%
+separate(SOGN,into = c("kode","SOGN"),sep=" ",extra="merge") %>%
+separate(SOGN,into = c("sogn","area","last"),sep="[\\(\\)]",extra="merge") %>%
+group_by(sogn, kode, area) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN=="Men"]),
+women      = sum(INDHOLD[KØN=="Women"]),
+pct_men    = men/population*100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))
+# County ------------------------------------------------------------------
+data_kommuner <- FOLK1A %>%
+filter(KØN != "Total", CIVILSTAND=="Total", OMRÅDE != "All Denmark", ALDER != "Total") %>%
+filter(!(str_detect(OMRÅDE, "Region"))) %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+")),
+area = OMRÅDE) %>%
+group_by(area) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN=="Men"]),
+women      = sum(INDHOLD[KØN=="Women"]),
+pct_men    = men/population*100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))%>%
+mutate(navn = if_else(area == "Copenhagen","København",area))
+# Region ------------------------------------------------------------------
+data_regioner <- FOLK1A %>%
+filter(KØN != "Total", CIVILSTAND=="Total", OMRÅDE != "All Denmark", ALDER != "Total") %>%
+filter(str_detect(OMRÅDE, "Region")) %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+")),
+navn = OMRÅDE) %>%
+group_by(navn) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN == "Men"]),
+women      = sum(INDHOLD[KØN == "Women"]),
+pct_men    = men/population * 100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID))
+geo_sogne    <- left_join(geo_sogne, data_sogne, by="kode")
+geo_regioner <- left_join(geo_regioner, data_regioner, by="navn")
+geo_kommuner <- left_join(geo_kommuner, data_kommuner, by="navn")
+# Parrish -----------------------------------------------------------------
+data_sogne <- SOGN1 %>%
+mutate(ALDER = as.numeric(str_extract(ALDER, "[:digit:]+"))) %>%
+separate(SOGN,into = c("kode","SOGN"),sep=" ",extra="merge") %>%
+separate(SOGN,into = c("sogn","area","last"),sep="[\\(\\)]",extra="merge") %>%
+group_by(sogn, kode, area) %>%
+summarize(population = sum(INDHOLD, na.rm=T),
+men        = sum(INDHOLD[KØN=="Men"]),
+women      = sum(INDHOLD[KØN=="Women"]),
+pct_men    = men/population*100,
+avg_age    = weighted.mean(ALDER, w = INDHOLD),
+stat_year  = first(TID)) %>% ungroup()
+# DAGI Data ---------------------------------------------------------------
+geo_sogne                             <- sf::read_sf("https://api.dataforsyningen.dk/sogne/?format=geojson")
+geo_sogne                             <- sf::st_as_sf(rmapshaper::ms_simplify(input = as(geo_sogne, 'Spatial')))
+geo_sogne    <- left_join(geo_sogne, data_sogne, by="kode")
+View(geo_sogne)
+save(geo_sogne,                             file="geo_sogne.rdata")
+save(geo_regioner,                          file="geo_regioner.rdata")
+save(geo_kommuner,                          file="geo_kommuner.rdata")
+save(geo_postnumre,                         file="geo_postnumre.rdata")
+save(geo_opstillingskredse,                 file="geo_opstillingskredse.rdata")
+save(geo_afstemningsomraader,               file="geo_afstemningsomraader.rdata")
+save(geo_landsdele,                         file="geo_landsdele.rdata")
+save(geo_menighedsraadsafstemningsomraader, file="geo_menighedsraadsafstemningsomraader.rdata")
+save(geo_politikredse,                      file="geo_politikredse.rdata")
+save(geo_retskredse,                        file="geo_retskredse.rdata")
+View(data_sogne)
+View(geo_sogne)
+View(geo_sogne[[17]][[95]])
+# DAGI Data ---------------------------------------------------------------
+geo_sogne_raw                             <- sf::read_sf("https://api.dataforsyningen.dk/sogne/?format=geojson")
+geo_regioner_raw                          <- sf::read_sf("https://api.dataforsyningen.dk/regioner/?format=geojson")
+geo_kommuner_raw                          <- sf::read_sf("https://api.dataforsyningen.dk/kommuner/?format=geojson")
+geo_postnumre_raw                         <- sf::read_sf("https://api.dataforsyningen.dk/postnumre/?format=geojson")
+geo_opstillingskredse_raw                 <- sf::read_sf("https://api.dataforsyningen.dk/opstillingskredse/?format=geojson")
+geo_afstemningsomraader_raw               <- sf::read_sf("https://api.dataforsyningen.dk/afstemningsomraader/?format=geojson")
+geo_landsdele_raw                         <- sf::read_sf("https://api.dataforsyningen.dk/landsdele/?format=geojson")
+geo_menighedsraadsafstemningsomraader_raw <- sf::read_sf("https://api.dataforsyningen.dk/menighedsraadsafstemningsomraader/?format=geojson")
+geo_politikredse_raw                      <- sf::read_sf("https://api.dataforsyningen.dk/politikredse/?format=geojson")
+geo_retskredse_raw                        <- sf::read_sf("https://api.dataforsyningen.dk/retskredse/?format=geojson")
+#geo_storkredse                        <- sf::read_sf("https://api.dataforsyningen.dk/storkredse/?format=geojson")
+#geo_valglandsdele                     <- sf::read_sf("https://api.dataforsyningen.dk/valglandsdele/?format=geojson")
+geo_sogne                             <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.04,input = as(geo_sogne_raw, 'Spatial')))
+geo_regioner                          <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_regioner_raw, 'Spatial')))
+geo_kommuner                          <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.04,input = as(geo_kommuner_raw, 'Spatial')))
+geo_postnumre                         <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_postnumre_raw, 'Spatial')))
+geo_opstillingskredse                 <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_opstillingskredse_raw, 'Spatial')))
+geo_afstemningsomraader               <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_afstemningsomraader_raw, 'Spatial')))
+geo_landsdele                         <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_landsdele_raw, 'Spatial')))
+geo_menighedsraadsafstemningsomraader <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_menighedsraadsafstemningsomraader_raw, 'Spatial')))
+geo_politikredse                      <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_politikredse_raw, 'Spatial')))
+geo_retskredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_retskredse_raw, 'Spatial')))
+View(geo_afstemningsomraader[[24]][[13]])
+geo_retskredse_raw                        <- sf::read_sf("https://api.dataforsyningen.dk/retskredse/?format=geojson")
+geo_retskredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_retskredse_raw, 'Spatial')))
+geo_sogne    <- left_join(geo_sogne, data_sogne, by="kode")
+geo_regioner <- left_join(geo_regioner, data_regioner, by="navn")
+geo_kommuner <- left_join(geo_kommuner, data_kommuner, by="navn")
+save(geo_sogne,                             file="geo_sogne.rdata")
+save(geo_regioner,                          file="geo_regioner.rdata")
+save(geo_kommuner,                          file="geo_kommuner.rdata")
+save(geo_postnumre,                         file="geo_postnumre.rdata")
+save(geo_opstillingskredse,                 file="geo_opstillingskredse.rdata")
+save(geo_afstemningsomraader,               file="geo_afstemningsomraader.rdata")
+save(geo_landsdele,                         file="geo_landsdele.rdata")
+save(geo_menighedsraadsafstemningsomraader, file="geo_menighedsraadsafstemningsomraader.rdata")
+save(geo_politikredse,                      file="geo_politikredse.rdata")
+save(geo_retskredse,                        file="geo_retskredse.rdata")
+ggplot() +
+geom_sf(data = geo_sogne, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Regioner (N=5)")
+p <- ggplot() +
+geom_sf(data = geo_sogne, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Regioner (N=5)")
+ggsave(p, filename = "p.png",dpi = 600, height=30, width = 30)
+p <- ggplot() +
+geom_sf(data = geo_menighedsraadsafstemningsomraader, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Regioner (N=5)")
+ggsave(p2, filename = "p.png",dpi = 600, height=30, width = 30)
+p2 <- ggplot() +
+geom_sf(data = geo_menighedsraadsafstemningsomraader, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Regioner (N=5)")
+ggsave(p2, filename = "p.png",dpi = 600, height=30, width = 30)
+p2 <- ggplot() +
+geom_sf(data = geo_postnumre, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Regioner (N=5)")
+ggsave(p2, filename = "p.png",dpi = 600, height=30, width = 30)
+geo_sogne                             <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_sogne_raw, 'Spatial')))
+geo_regioner                          <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_regioner_raw, 'Spatial')))
+geo_kommuner                          <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_kommuner_raw, 'Spatial')))
+geo_postnumre                         <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_postnumre_raw, 'Spatial')))
+geo_opstillingskredse                 <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_opstillingskredse_raw, 'Spatial')))
+geo_afstemningsomraader               <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_afstemningsomraader_raw, 'Spatial')))
+geo_landsdele                         <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_landsdele_raw, 'Spatial')))
+geo_menighedsraadsafstemningsomraader <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.015,input = as(geo_menighedsraadsafstemningsomraader_raw, 'Spatial')))
+geo_politikredse                      <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_politikredse_raw, 'Spatial')))
+geo_retskredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_retskredse_raw, 'Spatial')))
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void()
+geo_sogne    <- left_join(geo_sogne, data_sogne, by="kode")
+geo_regioner <- left_join(geo_regioner, data_regioner, by="navn")
+geo_kommuner <- left_join(geo_kommuner, data_kommuner, by="navn")
+save(geo_sogne,                             file="geo_sogne.rdata")
+save(geo_regioner,                          file="geo_regioner.rdata")
+save(geo_kommuner,                          file="geo_kommuner.rdata")
+save(geo_postnumre,                         file="geo_postnumre.rdata")
+save(geo_opstillingskredse,                 file="geo_opstillingskredse.rdata")
+save(geo_afstemningsomraader,               file="geo_afstemningsomraader.rdata")
+save(geo_landsdele,                         file="geo_landsdele.rdata")
+save(geo_menighedsraadsafstemningsomraader, file="geo_menighedsraadsafstemningsomraader.rdata")
+save(geo_politikredse,                      file="geo_politikredse.rdata")
+save(geo_retskredse,                        file="geo_retskredse.rdata")
+p2 <- ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Regioner (N=5)")
+ggsave(p2, filename = "p.png",dpi = 600, height=30, width = 30)
+library(DAGI)
+data(geo_kommuner)
+force(geo_kommuner)
+geo_kommuner <- data("geo_kommuner")
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void()
+data("geo_kommuner")
+a <- data("geo_kommuner")
+View(geo_kommuner)
+data("geo_kommuner")
+geo_kommuner
+aa <- geo_kommuner
+knitr::opts_chunk$set(
+collapse = TRUE,
+comment = "#>",
+fig.path = "man/figures/README-"
+)
+library(knitr)
+library(tidyverse)
+geo_kommuner <- data("geo_kommuner")
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void()
+geo_kommuner <- geo_kommuner
+geo_kommuner <- geo_kommuner
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void()
+library(patchwork)
+geo_sogne <- geo_sogne
+geo_regioner <- geo_regioner
+geo_kommuner <- geo_kommuner
+geo_postnumre <- geo_postnumre
+geo_opstillingskredse <- geo_opstillingskredse
+geo_afstemningsomraader <- geo_afstemningsomraader
+geo_landsdele <- geo_landsdele
+geo_politikredse     <- geo_politikredse
+geo_retskredse <- geo_retskredse
+p1 <- ggplot() +
+geom_sf(data = geo_regioner, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Regioner (N=5)")
+p2 <- ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Kommuner efter 2007 (N=99)")
+p3 <- ggplot() +
+geom_sf(data = geo_sogne, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Sogne (N=2141)")
+p5 <- ggplot() +
+geom_sf(data = geo_landsdele, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Landsdele (N=11)")
+p4 <- ggplot() +
+geom_sf(data = geo_postnumre, color = "white", fill = "grey40", size = 0.05) +
+theme_void() + labs(title = "Postnumre (N=1069)")
+p6 <- ggplot() +
+geom_sf(data = geo_opstillingskredse, color = "grey80", fill = "grey80", size = 0.05) +
+theme_void() + labs(title = "Opstillingskredse 1km (N=92)")
+p7 <- ggplot() +
+geom_sf(data = geo_afstemningsomraader, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Afstemningsomraader (N=1383)")
+p8 <- ggplot() +
+geom_sf(data = geo_politikredse, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Politikredse (N=12)")
+p9 <- ggplot() +
+geom_sf(data = geo_retskredse, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Retskredse (N=24)")
+p1 + p2 + p7 +p3 + p5 + p4 + p6 + p8 + p9
+p1 + p2 + p7 +p3 + p5 + p4 + p6 + p8 + p9
+p1 + p2 + p7 +p3 + p5 + p4 + p6 + p8 + p9
+p1 + p2 + p7 +p3 + p5 + p4 + p6 + p8 + p9
+p1 + p2 + p7 +p3 + p5 + p4 + p6 + p8 + p9
+p1 + p2 + p7 +p3 + p5 + p4 + p6 + p8 + p9
+p1 + p2 + p3 +p4 + p5 + p6 + p7 + p8 + p9
+p1 + p2 + p3 + p5 + p6 + p7 + p8 + p9 +p4
+p4 <- ggplot() +
+geom_sf(data = geo_postnumre, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Postnumre (N=1069)")
+p6 <- ggplot() +
+geom_sf(data = geo_opstillingskredse, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Opstillingskredse 1km (N=92)")
+p7 <- ggplot() +
+geom_sf(data = geo_afstemningsomraader, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Afstemningsomraader (N=1383)")
+p8 <- ggplot() +
+geom_sf(data = geo_politikredse, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Politikredse (N=12)")
+p9 <- ggplot() +
+geom_sf(data = geo_retskredse, color = "white", fill = "grey30", size = 0.05) +
+theme_void() + labs(title = "Retskredse (N=24)")
+p1 + p2 + p3 + p5 + p6 + p7 + p8 + p9 +p4
+install.packages("Rdpack")
+install.packages("testthat")
+library(DAGI)
+library(DAGI)
+knitr::opts_chunk$set(
+collapse = TRUE,
+comment = "#>",
+fig.path = "man/figures/README-"
+)
+library(knitr)
+library(tidyverse)
+library(patchwork)
+library(DAGI)
+geo_kommuner <- data(geo_kommuner)
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) +
+theme_void()
+library(DAGI)
+data("geo_kommuner")
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=ave_age), size = 0.05) +
+scale_color_viridis_c()+
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_color_viridis_c()+
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_color_viridis_d()+
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis()+
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_c()+
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_d()+
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_c()+
+theme_void()
+data(geo_kommuner)
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_c()+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_d()+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b()+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(6)+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(bins=5)+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(bin=7)+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(breaks=5)+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(breaks=9)+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(breaks=seq(30,70,5))+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(breaks=seq(30,70,3))+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b(breaks=seq(30,70,4))+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+ggplot() +
+geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) +
+scale_fill_viridis_b("Alder",breaks=seq(30,70,4))+
+labs(title="Gennemsnitsalder pr. kommune") +
+theme_void()
+library(DAGI)
+data(geo_kommuner)
+tools::checkRdaFiles(geo_kommuner)
+tools::checkRdaFiles(paths = "data/geo_kommuner")
+tools::checkRdaFiles(paths = "data/geo_kommuners")
+getwd
+getwd()
+tools::checkRdaFiles(paths = "data\geo_kommuners")
+tools::checkRdaFiles(paths = "data/geo_kommuner.rdata")
+usethis::use_data(geo_kommuner,compress = gzip)
+usethis::use_data(geo_kommuner,compress = "gzip")
+usethis::use_data(geo_kommuner,compress = "gzip")
+usethis::use_data(geo_kommuner,compress = "gzip",overwrite = TRUE)
+load("C:/Users/upc6/Documents/GitHub/dagir/inst/extdata/geo_sogne.rdata")
+usethis::use_data(geo_sogne,compress = "gzip",overwrite = TRUE)

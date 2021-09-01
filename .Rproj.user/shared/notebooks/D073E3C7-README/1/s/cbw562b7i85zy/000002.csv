@@ -1,0 +1,6 @@
+"0","data(geo_kommuner)"
+"0",""
+"0","ggplot() +"
+"0","  geom_sf(data = geo_kommuner, color = ""white"", aes(fill=avg_age), size = 0.05) + "
+"0","  scale_fill_viridis_b(""Gennemsnitsalder\npr. kommune"",breaks=seq(30,70,4))+"
+"0","  theme_void()"

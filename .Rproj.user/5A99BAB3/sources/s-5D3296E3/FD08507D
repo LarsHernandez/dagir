@@ -1,0 +1,26 @@
+{
+    "id": "FD08507D",
+    "path": "~/GitHub/dagir/R/geo_kommuner.R",
+    "project_path": "R/geo_kommuner.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1630501300466.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "22,25",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1630501432,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1630501432973,
+    "read_only": false,
+    "read_only_alternatives": []
+}
