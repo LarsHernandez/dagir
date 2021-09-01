@@ -15,9 +15,7 @@ regioner, kommuner and sogne
 may be installed using the following command
 
 ``` r
-devtools::install_github("HaemAalborg/ccostr")
-# Or including a vignette that demonstrates the bias and coverage of the estimators
-devtools::install_github("HaemAalborg/ccostr", build = TRUE, build_opts = c("--no-resave-data", "--no-manual"))
+devtools::install_github("LarsHernandez/dagir")
 ```
 
 # Overview
@@ -48,7 +46,7 @@ data(geo_kommuner)
 
 ggplot() +
   geom_sf(data = geo_kommuner, color = "white", aes(fill=avg_age), size = 0.05) + 
-  scale_fill_viridis_c()+
+  scale_fill_viridis_b("Alder",breaks=seq(30,70,4))+
   labs(title="Gennemsnitsalder pr. kommune") +
   theme_void()
 ```
