@@ -1,0 +1,25 @@
+Package: DAGI
+Type: Package
+Title: Spatial vector data for Danmarks Administrative Geografiske Inddeling DAGI
+Version: 0.1.0
+Authors@R: c(
+    person("Lars", "Boerty", email = "lars.borty@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3715-8528")))
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: Data saved as SF objects to plot with ggplot
+    data on population age and gender has been addded to regioner, kommuner and sogne
+License: MIT + file LICENSE
+Encoding: UTF-8
+RoxygenNote: 6.1.1
+Suggests: 
+    rmarkdown,
+    testthat (>= 2.1.0)
+VignetteBuilder: knitr
+Imports: ggplot2,
+        dplyr,
+        tibble,
+        knitr,
+        forcats,
+        rlang,
+        Rdpack
+Depends: R (>= 3.5.0)
+RdMacros: Rdpack
