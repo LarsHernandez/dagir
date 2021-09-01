@@ -71,11 +71,23 @@ geo <- subset(geo_sogne,subset = geo_sogne$area=="København Municipality")
 ggplot() +
   geom_sf(data = geo, color = "white", aes(fill=avg_age), size = 0.05) + 
   scale_fill_viridis_b("Alder",breaks=seq(30,70,4))+
-  labs(title="Gennemsnitsalder pr. sogn") +
+  labs(fill="Gennemsnitsalder\npr. sogn", title="København") +
   theme_void()
 ```
 
 ![](man/figures/README-unnamed-chunk-7-1.png)<!-- -->
+
+Det er også muligt at indstille plot-området som normalt med ggplot
+
+``` r
+ggplot() +
+  geom_sf(data = geo_sogne, color = "white", aes(fill=population), size = 0.05) + 
+  scale_fill_viridis_b("Antal\nindbyggere",breaks=seq(6000,30000,6000))+
+  theme_void() + 
+  coord_sf(xlim=c(12.4,12.7), ylim=c(55.62,55.73))
+```
+
+![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
 
 Geodata i SF formatet er smart da det er nemt at pivotere. Det gør det
 muligt at plotte facets i Data og er meget praktisk anvendeligt ved
@@ -86,20 +98,7 @@ geo_long <- geo %>% pivot_longer(cols=c("men","women"),names_to = "Gender",value
 
 ggplot() +
   geom_sf(data = geo_long, color = "white", aes(fill=n), size = 0.05) + 
-  labs(title="Indbyggere efter køn") +
   facet_wrap(~Gender)
-```
-
-![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
-
-Det er også muligt at indstille plot-området som normalt med ggplot
-
-``` r
-ggplot() +
-  geom_sf(data = geo_sogne, color = "white", aes(fill=population), size = 0.05) + 
-  scale_fill_viridis_b("Antal\nindbyggere",breaks=seq(6000,30000,6000))+
-  theme_void() + 
-  coord_sf(xlim=c(12.4,12.7), ylim=c(55.62,55.73))
 ```
 
 ![](man/figures/README-unnamed-chunk-9-1.png)<!-- -->
@@ -112,15 +111,36 @@ load(url("https://github.com/sebastianbarfort/mapDK/blob/master/data/benches.rda
 ggplot() +
   geom_sf(data = geo, color = "white", fill="grey30", size = 0.05) + 
   geom_point(data=benches, aes(lon,lat), color="cornflowerblue", size=0.5)+
-  labs(title="Bænke i København") +
+  labs(title="Bænke i København", subtitle="Mon det er muligt at tælle hvor mange bænke der er i hver sogn?") +
   theme_void() 
 ```
 
 ![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
 
-Der er også et visuelt center for hver område, det kan. f.eks. bruges
-til at sætte en label på området, eller f.eks. lave en udjævning over
-små områder (LOESS med population som vægt)
+Med `sf` pakken er det muligt at tælle punkterne i hvert område.
+
+``` r
+library(sf)
+#> Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1
+
+benches_st <- st_as_sf(benches, coords = c("lon", "lat"), crs = 4326, agr = "constant")
+
+geo$pt_count <- lengths(st_intersects(geo, benches_st))
+
+ggplot(data = geo) +
+  geom_sf(color = "white", aes(fill=pt_count), size = 0.05) + 
+  geom_point(data=benches, aes(lon,lat), color="cornflowerblue", size=0.5)+
+  geom_text(aes(label=pt_count, x=visueltcenter_x, y=visueltcenter_y), color="white")+
+  labs(fill="Bænke")+
+  theme_void() 
+```
+
+![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
+
+Der er et visuelt center for hver område (det brugte jeg før til at
+sætte antal på kortet). Disse punkter kan også bruges til at sætte en
+label på området, eller f.eks. lave en udjævning over små områder (LOESS
+med population som vægt)
 
 ``` r
 data(geo_regioner)
@@ -131,7 +151,7 @@ ggplot(data = geo_regioner) +
   theme_void() 
 ```
 
-![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
 
 # Tilgængelige datasæt
 
