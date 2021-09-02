@@ -1,0 +1,7 @@
+"0","geo$area <- st_area(geo)/1000000"
+"0",""
+"0","ggplot(data = geo) +"
+"0","  geom_sf(color = ""white"", aes(fill=as.numeric(area)), size = 0.05) + "
+"0","  geom_text(aes(label=round(as.numeric(area),2), x=visueltcenter_x, y=visueltcenter_y), color=""white"")+"
+"0","  labs(fill=""Km\U00B2"")+"
+"0","  theme_void() "

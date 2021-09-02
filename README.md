@@ -137,17 +137,16 @@ ggplot(data = geo) +
 
 ![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
 
-Der er et visuelt center for hver område (det brugte jeg før til at
-sætte antal på kortet). Disse punkter kan også bruges til at sætte en
-label på området, eller f.eks. lave en udjævning over små områder (LOESS
-med population som vægt)
+og hvis man kan også udregne størrelsen af hvert sogn. Så kunne man
+f.eks. udregne antal bænke pr. km^2
 
 ``` r
-data(geo_regioner)
+geo$area <- st_area(geo)/1000000
 
-ggplot(data = geo_regioner) +
-  geom_sf(color = "white", fill="grey30", size = 0.05) + 
-  geom_label(aes(label=navn, x=visueltcenter_x, y=visueltcenter_y))+
+ggplot(data = geo) +
+  geom_sf(color = "white", aes(fill=as.numeric(area)), size = 0.05) + 
+  geom_text(aes(label=round(as.numeric(area),2), x=visueltcenter_x, y=visueltcenter_y), color="white")+
+  labs(fill="Km\U00B2")+
   theme_void() 
 ```
 
@@ -157,7 +156,7 @@ Brugen af `ggplot` gør det også meget fleksibelt hvis man ønsker at
 animere sit kort. Det kan f.eks. gøres med `gganimate` som kan lave en
 gif. Det kan bruges til at illustrere ændringer i punkter, f.eks.
 strømninger, men også bare at sample placeringer uden noget større
-formål som her:
+formål som her.
 
 ``` r
 library(gganimate)
@@ -179,6 +178,22 @@ anim_save("map_ani.gif", map_ani)
 
 ![](map_ani.gif)
 
+Der er et visuelt center for hver område (det brugte jeg før til at
+sætte antal på kortet). Disse punkter kan også bruges til at sætte en
+label på området, eller f.eks. lave en udjævning over små områder (LOESS
+med population som vægt).
+
+``` r
+data(geo_regioner)
+
+ggplot(data = geo_regioner) +
+  geom_sf(color = "white", fill="grey30", size = 0.05) + 
+  geom_label(aes(label=navn, x=visueltcenter_x, y=visueltcenter_y))+
+  theme_void() 
+```
+
+![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
+
 # Tilgængelige datasæt
 
 ``` r
@@ -194,3 +209,13 @@ data(geo_retskredse)
 ```
 
 ## References
+
+Indeholder data fra Styrelsen for Dataforsyning og Effektivisering,
+DAGI, september 2021
+
+Indeholder data med egne beregninger baseret på tal fra Danmarks
+Statistik, september 2021
+
+<https://statistikbanken.dk/sogn1>
+
+<https://statistikbanken.dk/folk1a>
