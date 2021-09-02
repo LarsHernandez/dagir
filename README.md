@@ -129,7 +129,7 @@ geo$pt_count <- lengths(st_intersects(geo, benches_st))
 
 ggplot(data = geo) +
   geom_sf(color = "white", aes(fill=pt_count), size = 0.05) + 
-  geom_point(data=benches, aes(lon,lat), color="cornflowerblue", size=0.5)+
+  #geom_point(data=benches, aes(lon,lat), color="cornflowerblue", size=0.5)+
   geom_text(aes(label=pt_count, x=visueltcenter_x, y=visueltcenter_y), color="white")+
   labs(fill="Bænke")+
   theme_void() 
@@ -137,21 +137,45 @@ ggplot(data = geo) +
 
 ![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
 
-Der er et visuelt center for hver område (det brugte jeg før til at
-sætte antal på kortet). Disse punkter kan også bruges til at sætte en
-label på området, eller f.eks. lave en udjævning over små områder (LOESS
-med population som vægt)
-
 ``` r
-data(geo_regioner)
+library(gganimate)
 
-ggplot(data = geo_regioner) +
-  geom_sf(color = "white", fill="grey30", size = 0.05) + 
-  geom_label(aes(label=navn, x=visueltcenter_x, y=visueltcenter_y))+
-  theme_void() 
+geo2 <- geo %>% mutate(ss=1) %>% 
+  rbind(geo %>% mutate(geometry=sample(geometry), 
+                       ss = 2))
+
+p <- geo2 %>% 
+  ggplot() +
+  geom_sf(color = "white", aes(fill=pt_count), size = 0.05) + 
+  #geom_point(data=benches, aes(lon,lat), color="cornflowerblue", size=0.5)+
+  #geom_text(aes(label=pt_count, x=visueltcenter_x, y=visueltcenter_y), color="white")+
+  #labs(fill="Bænke")+
+  theme_void() +
+  transition_time(ss) +
+  ease_aes('linear')
+
+map_ani <- animate(p, nframes=100, fps=20)
+
+anim_save("map_ani.gif", map_ani)
 ```
 
-![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
+![](map_ani.gif)
+
+
+
+
+    Der er et visuelt center for hver område (det brugte jeg før til at sætte antal på kortet). Disse punkter kan også bruges til at sætte en label på området, eller f.eks. lave en udjævning over små områder (LOESS med population som vægt)
+
+
+    ```r
+    data(geo_regioner)
+
+    ggplot(data = geo_regioner) +
+      geom_sf(color = "white", fill="grey30", size = 0.05) + 
+      geom_label(aes(label=navn, x=visueltcenter_x, y=visueltcenter_y))+
+      theme_void() 
+
+![](man/figures/README-unnamed-chunk-13-1.png)<!-- -->
 
 # Tilgængelige datasæt
 

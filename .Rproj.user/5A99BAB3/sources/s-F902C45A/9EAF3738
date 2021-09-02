@@ -3,7 +3,7 @@
     "path": "~/GitHub/dagir/README.Rmd",
     "project_path": "README.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "481762824",
     "contents": "",
     "dirty": false,
     "created": 1630503287188.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "169,0",
-        "scrollLine": "169"
+        "cursorPosition": "172,18",
+        "scrollLine": "170"
     },
     "folds": "",
-    "lastKnownWriteTime": 1630521648,
+    "lastKnownWriteTime": 1630565488,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1630521648078,
+    "last_content_update": 1630565488100,
     "read_only": false,
     "read_only_alternatives": []
 }

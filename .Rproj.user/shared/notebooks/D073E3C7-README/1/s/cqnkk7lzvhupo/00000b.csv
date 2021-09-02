@@ -1,0 +1,7 @@
+"0","load(url(""https://github.com/sebastianbarfort/mapDK/blob/master/data/benches.rda?raw=true""))"
+"0",""
+"0","ggplot() +"
+"0","  geom_sf(data = geo, color = ""white"", fill=""grey30"", size = 0.05) + "
+"0","  geom_point(data=benches, aes(lon,lat), color=""cornflowerblue"", size=0.5)+"
+"0","  labs(title=""Bænke i København"", subtitle=""Mon det er muligt at tælle hvor mange bænke der er i hver sogn?"") +"
+"0","  theme_void() "

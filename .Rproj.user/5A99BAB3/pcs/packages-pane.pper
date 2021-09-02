@@ -1,0 +1,7 @@
+{
+    "installOptions": {
+        "installFromRepository": true,
+        "libraryPath": "C:/Users/upc6/Documents/R/R-4.1.1/library",
+        "installDependencies": true
+    }
+}
