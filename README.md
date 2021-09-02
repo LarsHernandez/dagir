@@ -137,45 +137,47 @@ ggplot(data = geo) +
 
 ![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
 
+Der er et visuelt center for hver område (det brugte jeg før til at
+sætte antal på kortet). Disse punkter kan også bruges til at sætte en
+label på området, eller f.eks. lave en udjævning over små områder (LOESS
+med population som vægt)
+
+``` r
+data(geo_regioner)
+
+ggplot(data = geo_regioner) +
+  geom_sf(color = "white", fill="grey30", size = 0.05) + 
+  geom_label(aes(label=navn, x=visueltcenter_x, y=visueltcenter_y))+
+  theme_void() 
+```
+
+![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
+
+Brugen af `ggplot` gør det også meget fleksibelt hvis man ønsker at
+animere sit kort. Det kan f.eks. gøres med `gganimate` som kan lave en
+gif. Det kan bruges til at illustrere ændringer i punkter, f.eks.
+strømninger, men også bare at sample placeringer uden noget større
+formål som her:
+
 ``` r
 library(gganimate)
 
-geo2 <- geo %>% mutate(ss=1) %>% 
-  rbind(geo %>% mutate(geometry=sample(geometry), 
-                       ss = 2))
+geo2 <- rbind(geo %>% mutate(ss = 1),
+              geo %>% mutate(ss = 2, geometry = sample(geometry)))
 
 p <- geo2 %>% 
   ggplot() +
-  geom_sf(color = "white", aes(fill=pt_count), size = 0.05) + 
-  #geom_point(data=benches, aes(lon,lat), color="cornflowerblue", size=0.5)+
-  #geom_text(aes(label=pt_count, x=visueltcenter_x, y=visueltcenter_y), color="white")+
-  #labs(fill="Bænke")+
+  geom_sf(color = "white", aes(fill=pt_count), size = 0.6, show.legend = F) + 
   theme_void() +
   transition_time(ss) +
   ease_aes('linear')
 
-map_ani <- animate(p, nframes=100, fps=20)
+map_ani <- animate(p, nframes=200, fps=40, height = 8, width = 10, units = "in",res=150)
 
 anim_save("map_ani.gif", map_ani)
 ```
 
 ![](map_ani.gif)
-
-
-
-
-    Der er et visuelt center for hver område (det brugte jeg før til at sætte antal på kortet). Disse punkter kan også bruges til at sætte en label på området, eller f.eks. lave en udjævning over små områder (LOESS med population som vægt)
-
-
-    ```r
-    data(geo_regioner)
-
-    ggplot(data = geo_regioner) +
-      geom_sf(color = "white", fill="grey30", size = 0.05) + 
-      geom_label(aes(label=navn, x=visueltcenter_x, y=visueltcenter_y))+
-      theme_void() 
-
-![](man/figures/README-unnamed-chunk-13-1.png)<!-- -->
 
 # Tilgængelige datasæt
 

@@ -169,31 +169,6 @@ ggplot(data = geo) +
 
 ```
 
-```{r eval=FALSE, include=TRUE}
-library(gganimate)
-
-geo2 <- geo %>% mutate(ss=1) %>% 
-  rbind(geo %>% mutate(geometry=sample(geometry), 
-                       ss = 2))
-
-p <- geo2 %>% 
-  ggplot() +
-  geom_sf(color = "white", aes(fill=pt_count), size = 0.05) + 
-  #geom_point(data=benches, aes(lon,lat), color="cornflowerblue", size=0.5)+
-  #geom_text(aes(label=pt_count, x=visueltcenter_x, y=visueltcenter_y), color="white")+
-  #labs(fill="Bænke")+
-  theme_void() +
-  transition_time(ss) +
-  ease_aes('linear')
-
-map_ani <- animate(p, nframes=100, fps=20)
-
-anim_save("map_ani.gif", map_ani)
-```
-
-
-![](map_ani.gif)
-```
 
 
 
@@ -207,6 +182,31 @@ ggplot(data = geo_regioner) +
   geom_label(aes(label=navn, x=visueltcenter_x, y=visueltcenter_y))+
   theme_void() 
 ```
+
+
+Brugen af `ggplot` gør det også meget fleksibelt hvis man ønsker at animere sit kort. Det kan f.eks. gøres med `gganimate` som kan lave en gif. Det kan bruges til at illustrere ændringer i punkter, f.eks. strømninger, men også bare at sample placeringer uden noget større formål som her:
+
+
+```{r eval=FALSE, include=TRUE}
+library(gganimate)
+
+geo2 <- rbind(geo %>% mutate(ss = 1),
+              geo %>% mutate(ss = 2, geometry = sample(geometry)))
+
+p <- geo2 %>% 
+  ggplot() +
+  geom_sf(color = "white", aes(fill=pt_count), size = 0.6, show.legend = F) + 
+  theme_void() +
+  transition_time(ss) +
+  ease_aes('linear')
+
+map_ani <- animate(p, nframes=200, fps=40, height = 8, width = 10, units = "in",res=150)
+
+anim_save("map_ani.gif", map_ani)
+```
+
+
+![](map_ani.gif)
 
 
 # Tilgængelige datasæt
