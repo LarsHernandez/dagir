@@ -1,5 +1,0 @@
-"0","geo_long <- geo %>% pivot_longer(cols=c(""men"",""women""),names_to = ""Gender"",values_to = ""n"")"
-"0",""
-"0","ggplot() +"
-"0","  geom_sf(data = geo_long, color = ""white"", aes(fill=n), size = 0.05) + "
-"0","  facet_wrap(~Gender)"

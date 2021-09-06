@@ -138,19 +138,30 @@ ggplot(data = geo) +
 ![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
 
 og hvis man kan også udregne størrelsen af hvert sogn. Så kunne man
-f.eks. udregne antal bænke pr. km^2
+f.eks. udregne antal bænke pr. km^2. Her er det gjort for Aalborg
+kommune
 
 ``` r
+geo <- subset(geo_sogne,subset = geo_sogne$area=="Aalborg Municipality")
+
 geo$area <- st_area(geo)/1000000
 
 ggplot(data = geo) +
   geom_sf(color = "white", aes(fill=as.numeric(area)), size = 0.05) + 
-  geom_text(aes(label=round(as.numeric(area),2), x=visueltcenter_x, y=visueltcenter_y), color="white")+
+  geom_text(aes(label=round(as.numeric(area),1), x=visueltcenter_x, y=visueltcenter_y), color="white", size=4)+
   labs(fill="Km\U00B2")+
   theme_void() 
 ```
 
 ![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
+
+Der er mange anvendelser af funktionerne i `sf` pakken. f.eks.
+
+-   Tilskære postnumre kortet til kun at vise landkort med
+    `sf::st_intersection` samt et andet kort, f.eks. regioner.
+-   Placere centroiden fra et kort i områder fra et andet. f.eks.
+    omregne data fra et type kort til et andet.
+-   andet
 
 Brugen af `ggplot` gør det også meget fleksibelt hvis man ønsker at
 animere sit kort. Det kan f.eks. gøres med `gganimate` som kan lave en
@@ -194,9 +205,30 @@ ggplot(data = geo_regioner) +
 
 ![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
 
+I Danmark havde vi en kommunalreform i 2007 hvor vi gik fra 271 kommuner
+til 99. Mange kommuner blev sammenlagt, men nogle få fik ændret
+kommunegrænser og blev altså delt. Registreringer af gamle kommuner
+forekommer ofte i kliniske databaser eller ældre datasæt. Her er det
+praktisk at kunne omregne fra gamle kommuner til nye. Der ligger et
+datasæt som hedder … og heri findes en nøgle som nogenlunde fordeler de
+gamle kommuner (med deres koder) på nye. Der er også inkluderet et
+ekstra sæt ældre koordinater som ikke er fra DAGI hvormed man kan plotte
+de gamle komuner.
+
+``` r
+data(geo_f07)
+
+ggplot(data = geo_f07) +
+  geom_sf(color = "grey30", fill="white", size = 0.05) + 
+  theme_void() 
+```
+
+![](man/figures/README-unnamed-chunk-15-1.png)<!-- -->
+
 # Tilgængelige datasæt
 
 ``` r
+# DAGI
 data(geo_sogne)
 data(geo_regioner)
 data(geo_kommuner)
@@ -206,6 +238,9 @@ data(geo_afstemningsomraader)
 data(geo_landsdele)
 data(geo_politikredse)    
 data(geo_retskredse)
+
+# Ikke DAGI
+data(geo_f07)
 ```
 
 ## References

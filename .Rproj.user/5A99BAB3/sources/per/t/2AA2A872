@@ -1,0 +1,27 @@
+{
+    "id": "2AA2A872",
+    "path": "~/GitHub/dagir/inst/kommune_f07.R",
+    "project_path": "inst/kommune_f07.R",
+    "type": "r_source",
+    "hash": "2557329369",
+    "contents": "",
+    "dirty": false,
+    "created": 1630576496717.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "46,0",
+        "scrollLine": "32"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1630909528,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1630909528038,
+    "read_only": false,
+    "read_only_alternatives": []
+}

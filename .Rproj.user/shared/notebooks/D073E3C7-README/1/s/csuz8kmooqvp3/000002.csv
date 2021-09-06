@@ -1,5 +1,0 @@
-"0","data(geo_kommuner)"
-"0",""
-"0","ggplot() +"
-"0","  geom_sf(data = geo_kommuner, color = ""white"", fill = ""grey30"", size = 0.05) + "
-"0","  theme_void()"

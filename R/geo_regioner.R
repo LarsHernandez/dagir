@@ -6,22 +6,22 @@
 #'
 #' @format A data frame with ? rows and ? variables:
 #' \describe{
-#'   \item{avg_age}{Individuel kode for kommunen}
 #'   \item{dagi_id}{Individuel kode for kommunen}
-#'   \item{geo_version}{Individuel kode for kommunen}
-#'   \item{geo_changed}{Individuel kode for kommunen}
-#'   \item{changed}{Individuel kode for kommunen}
-#'   \item{eometry }{Individuel kode for kommunen}
 #'   \item{kode}{Individuel kode for kommunen}
-#'   \item{men}{Individuel kode for kommunen}
-#'   \item{women}{Individuel kode for kommunen}
 #'   \item{navn}{Individuel kode for kommunen}
 #'   \item{nuts2}{Individuel kode for kommunen}
-#'   \item{pct_men}{Individuel kode for kommunen}
-#'   \item{population}{Individuel kode for kommunen}
-#'   \item{stat_year}{Individuel kode for kommunen}
+#'   \item{changed}{Individuel kode for kommunen}
+#'   \item{geo_changed}{Individuel kode for kommunen}
+#'   \item{geo_version}{Individuel kode for kommunen}
 #'   \item{visueltcenter_x}{Individuel kode for kommunen}
 #'   \item{visueltcenter_y}{Individuel kode for kommunen}
+#'   \item{population}{Individuel kode for kommunen}
+#'   \item{men}{Individuel kode for kommunen}
+#'   \item{women}{Individuel kode for kommunen}
+#'   \item{pct_men}{Individuel kode for kommunen}
+#'   \item{avg_age}{Individuel kode for kommunen}
+#'   \item{stat_year}{Individuel kode for kommunen}
+#'   \item{geometry}{Individuel kode for kommunen}
 #' }
 #'
 #' @keywords datasets

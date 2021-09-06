@@ -1,0 +1,26 @@
+"0","geo_f07 <- st_read(dsn=""."", layer = ""kommune_2007"")
+"
+"1","Reading layer `"
+"1","kommune_2007"
+"1","' from data source "
+"1","`"
+"1","C:\Users\upc6\Desktop\MM_geo_lise\shape10"
+"1","' "
+"1","using driver `"
+"1","ESRI Shapefile"
+"1","'"
+"1","
+"
+"1","Simple feature collection with 271 features and 9 fields"
+"1","
+"
+"1","Geometry type: MULTIPOLYGON
+"
+"1","Dimension:     XY
+"
+"1","Bounding box:  "
+"1","xmin: 441577.1 ymin: 6049782 xmax: 893021.2 ymax: 6402205"
+"1","
+"
+"1","Projected CRS: _MI_0
+"

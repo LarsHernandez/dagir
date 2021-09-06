@@ -7,20 +7,28 @@
 \format{
 A data frame with ? rows and ? variables:
 \describe{
-  \item{avg_age}{Individuel kode for kommunen}
-  \item{dagi_id}{Individuel kode for kommunen}
-  \item{geo_version}{Individuel kode for kommunen}
-  \item{geo_changed}{Individuel kode for kommunen}
+  \item{afstemningssted_adgangspunkt_x}{Individuel kode for kommunen}
+  \item{afstemningssted_adgangspunkt_y}{Individuel kode for kommunen}
+  \item{afstemningsstedadressebetegnelse}{Individuel kode for kommunen}
+  \item{afstemningsstedadresseid}{Individuel kode for kommunen}
+  \item{afstemningsstednavn}{Individuel kode for kommunen}
   \item{changed}{Individuel kode for kommunen}
-  \item{eometry }{Individuel kode for kommunen}
-  \item{kode}{Individuel kode for kommunen}
-  \item{men}{Individuel kode for kommunen}
-  \item{women}{Individuel kode for kommunen}
+  \item{dagi_id}{Individuel kode for kommunen}
+  \item{geo_changed}{Individuel kode for kommunen}
+  \item{geo_version}{Individuel kode for kommunen}
+  \item{geometry}{Individuel kode for kommunen}
+  \item{kommunekode}{Individuel kode for kommunen}
+  \item{kommunenavn}{Individuel kode for kommunen}
   \item{navn}{Individuel kode for kommunen}
-  \item{nuts2}{Individuel kode for kommunen}
-  \item{pct_men}{Individuel kode for kommunen}
-  \item{population}{Individuel kode for kommunen}
-  \item{stat_year}{Individuel kode for kommunen}
+  \item{nummer}{Individuel kode for kommunen}
+  \item{opstillingskredsnavn}{Individuel kode for kommunen}
+  \item{opstillingskredsnummer}{Individuel kode for kommunen}
+  \item{regionskode}{Individuel kode for kommunen}
+  \item{regionsnavn}{Individuel kode for kommunen}
+  \item{storkredsnavn}{Individuel kode for kommunen}
+  \item{storkredsnummer}{Individuel kode for kommunen}
+  \item{valglandsdelsbogstav}{Individuel kode for kommunen}
+  \item{valglandsdelsnavn}{Individuel kode for kommunen}
   \item{visueltcenter_x}{Individuel kode for kommunen}
   \item{visueltcenter_y}{Individuel kode for kommunen}
 }
