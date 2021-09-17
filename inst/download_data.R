@@ -15,7 +15,7 @@ geo_retskredse_raw                        <- sf::read_sf("https://api.dataforsyn
 #geo_storkredse_raw                        <- sf::read_sf("https://api.dataforsyningen.dk/storkredse/?format=geojson")
 #geo_valglandsdele_raw                     <- sf::read_sf("https://api.dataforsyningen.dk/valglandsdele/?format=geojson")
 
-geo_sogne                             <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_sogne_raw, 'Spatial')))
+geo_sogne_high                        <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.08,input = as(geo_sogne_raw, 'Spatial')))
 geo_regioner                          <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_regioner_raw, 'Spatial')))
 geo_kommuner                          <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.03,input = as(geo_kommuner_raw, 'Spatial')))
 geo_postnumre                         <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_postnumre_raw, 'Spatial')))
@@ -26,7 +26,7 @@ geo_menighedsraadsafstemningsomraader <- sf::st_as_sf(rmapshaper::ms_simplify(ke
 geo_politikredse                      <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_politikredse_raw, 'Spatial')))
 geo_retskredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_retskredse_raw, 'Spatial')))
 
-geo_sogne                             <- geo_sogne                             %>% rename(changed = ændret, geo_changed = geo_ændret)
+geo_sogne_high                             <- geo_sogne_high                             %>% rename(changed = ændret, geo_changed = geo_ændret)
 geo_regioner                          <- geo_regioner                          %>% rename(changed = ændret, geo_changed = geo_ændret)
 geo_kommuner                          <- geo_kommuner                          %>% rename(changed = ændret, geo_changed = geo_ændret)
 geo_postnumre                         <- geo_postnumre                         %>% rename(changed = ændret, geo_changed = geo_ændret)
@@ -125,6 +125,7 @@ std_sogne <- SOGN114 %>%
 save(std_kommuner,file="std_kommuner.rdata")
 save(std_sogne,file="std_sogne.rdata")
 
+save(geo_sogne_high,file="geo_sogne_high.rdata")
 #flk <- FOLK1A14 %>%
 #  filter(KØN != "Total", CIVILSTAND == "Total", OMRÅDE != "All Denmark", ALDER != "Total") %>%
 #  filter(!(str_detect(OMRÅDE, "Region"))) %>%

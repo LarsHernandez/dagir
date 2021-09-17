@@ -1,0 +1,7 @@
+"0",""
+"0",""
+"0","p <- ggplot() +"
+"0","  geom_sf(data = geo_val, color = ""white"", fill = ""grey30"", size = 0.05) + "
+"0","  theme_void() + labs(title = ""Regioner (N=5)"")"
+"2","Error in fortify(data) : object 'geo_val' not found
+"

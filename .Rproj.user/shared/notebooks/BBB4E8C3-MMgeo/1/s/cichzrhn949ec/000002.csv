@@ -1,0 +1,148 @@
+"0","out <- extract_tables('RadonRapport2001.pdf',pages = c(118:132))"
+"0",""
+"0","amt <- list()"
+"0",""
+"0","amt[[1]]  <- out[[1]][c(4:5),  c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[2]]  <- out[[2]][c(14:31),c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"") %>% "
+"0","  separate(...3, c(""...2"", ""...3"")) %>% select(...1,...2,...3,...4,...5)"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[3]]  <- out[[3]][c(4:22), c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[4]]  <- out[[4]][c(4:14), c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[5]]  <- out[[5]][c(4:26), c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[6]]  <- out[[6]][c(5:28), c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[7]]  <- out[[7]][c(4:8),  c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[8]]  <- out[[8]][c(5:36), c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[9]]  <- out[[9]][c(4:26), c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[10]] <- out[[10]][c(4:17),c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[11]] <- out[[11]][c(4:19),c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[12]] <- out[[12]][c(5:22),c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[13]] <- out[[13]][c(6:31),c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[14]] <- out[[14]][c(5:21),c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","amt[[15]] <- out[[15]][c(5:31),c(1,2,3,11,10)] %>% as_tibble(.name_repair = ""unique"")"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+"
+"0","data <- do.call(""rbind"", amt) %>% "
+"0","  rename(gkommune = ...1,"
+"0","         huse     = ...2,"
+"0","         sand     = ...3,"
+"0","         klasse   = ...4,"
+"0","         model    = ...5) %>% "
+"0","  mutate(across(huse:klasse, as.numeric)) %>% "
+"0","  mutate(model = str_extract(model, '[:blank:](.+)'))"
+"0",""
+"0","radon_data <- data %>% "
+"0","  mutate(NAVN = str_replace_all(gkommune, ""Ã¸"",""\xf8""),"
+"0","         NAVN = str_replace_all(NAVN, ""Ã˜"",""Ø""),"
+"0","         NAVN = str_replace_all(NAVN, ""Ã¦"",""\xe6""),"
+"0","         NAVN = str_replace_all(NAVN, ""Ã†"",""Æ""),"
+"0","         NAVN = str_replace_all(NAVN, ""Ã¥"",""\xe5""),"
+"0","         NAVN = str_replace_all(NAVN, ""Ã…"",""Å""),"
+"0","         NAVN = str_replace_all(NAVN, ""Nr."",""Nørre"")) %>% "
+"0","  mutate(NAVN=if_else(NAVN==""Hasle"",""Bornholms Regionskommune"", NAVN))"
+"0",""
+"0","geo_f07$kom <- iconv(geo_f07$NAVN,sub = ""Unicode"")"
+"0",""
+"0","radon <- geo_f07 %>% "
+"0","  left_join(radon_data, by = c(""kom"" = ""NAVN"")) "

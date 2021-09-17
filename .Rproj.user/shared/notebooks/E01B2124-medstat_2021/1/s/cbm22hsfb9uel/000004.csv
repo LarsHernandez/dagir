@@ -1,0 +1,4 @@
+"0","ggsave(me8, file=""plots/me8.pdf"", height = 4, width=10, dpi=600)"
+"2","Error in grDevices::pdf(file = filename, ..., version = version) : 
+  kan ikke åbne fil 'plots/me8.pdf'
+"

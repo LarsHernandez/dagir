@@ -1,0 +1,23 @@
+"0","defl <- statsDK::sdk_retrieve_data(""PRIS112"") %>% "
+"0","  filter(HOVED == ""Average, yearly"","
+"0","         between(TID, 1996, 2020)) %>% "
+"0","  mutate(index = as.numeric(INDHOLD)/103.4)"
+"2","Autosetting missing values to * for: HOVED, Tid
+"
+"2","Getting data. This can take a while, if the data is very large.
+"
+"2","Data collected succesfully
+"
+"1","[1m[1mRows: [1m[22m[34m[34m82[34m[39m [1m[1mColumns: [1m[22m[34m[34m3[34m[39m
+"
+"1","[36m--[39m [1m[1mColumn specification[1m[22m [36m---------------------------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "";""
+[31mchr[39m (2): HOVED, INDHOLD
+[32mdbl[39m (1): TID
+"
+"1","
+[36mi[39m Use [38;5;251m[48;5;235m[38;5;251m[48;5;235m`spec()`[48;5;235m[38;5;251m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;251m[48;5;235m[38;5;251m[48;5;235m`show_col_types = FALSE`[48;5;235m[38;5;251m[49m[39m to quiet this message.
+"
+"0","data <- data %>% left_join(defl, by=c(""year""=""TID"")) %>% "
+"0","  mutate(cost_adj = a1_turnover/index)"

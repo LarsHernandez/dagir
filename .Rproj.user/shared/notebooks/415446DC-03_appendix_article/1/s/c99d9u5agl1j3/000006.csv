@@ -1,0 +1,1 @@
+"0","(a2 <- boxGrob(paste(""No patients starting before 2008-04-01"",            pnt(data_all_2)), x=.25, y=.70, box_gp = gp, width = .35, height=.16))"

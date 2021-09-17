@@ -1,0 +1,2 @@
+"0",""
+"0","(a1b <- boxGrob(paste(""High-cost > 95th pctl (X2a)""), x=.85, y=.965,  box_gp = gp, width = .24, height=.07))"

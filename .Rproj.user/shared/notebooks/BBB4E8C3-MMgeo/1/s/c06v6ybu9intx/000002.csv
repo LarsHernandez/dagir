@@ -1,0 +1,30 @@
+"0","erhv <- sdk_retrieve_data(""ERHV2"", Tid = ""2019"")"
+"2","Autosetting missing values to * for: OMRÅDE, BRANCHEDB0710, TAL
+"
+"2","Getting data. This can take a while, if the data is very large.
+"
+"2","Data collected succesfully
+"
+"1","[1m[1mRows: [1m[22m[34m[34m2217[34m[39m [1m[1mColumns: [1m[22m[34m[34m5[34m[39m
+"
+"1","[36m--[39m [1m[1mColumn specification[1m[22m [36m----------------------------------------------------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "";""
+[31mchr[39m (3): OMRÅDE, BRANCHEDB0710, TAL
+[32mdbl[39m (2): TID, INDHOLD
+"
+"1","
+[36mi[39m Use [38;5;251m[48;5;235m[38;5;251m[48;5;235m`spec()`[48;5;235m[38;5;251m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;251m[48;5;235m[38;5;251m[48;5;235m`show_col_types = FALSE`[48;5;235m[38;5;251m[49m[39m to quiet this message.
+"
+"0","erhv <- erhv %>% "
+"0","  filter(TAL == ""Jobs at the end of November"","
+"0","         BRANCHEDB0710 == ""1 Agriculture, forestry and fishing"")"
+"0",""
+"0","geo_kom %>% "
+"0","  left_join(erhv, by=c(""navn""=""OMRÅDE"")) %>% "
+"0","  mutate(INDHOLD = cut(INDHOLD, c(0,500,1000,1500,2000,10000),dig.lab=10)) %>% "
+"0","  ggplot() + "
+"0","  geom_sf(color=""white"", aes(fill=INDHOLD)) + "
+"0","  theme_void()+ theme(legend.position = c(0.85,0.75))+"
+"0","    scale_fill_brewer(""Arbejdspladser"",palette=""GnBu"") +"
+"0","  labs(title=""Arbejdspladser - Agriculture, forestry and fishing"")"

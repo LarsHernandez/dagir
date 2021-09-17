@@ -1,0 +1,4 @@
+"0","eur  <- function(x) { format(round(x / DKKtoEUR,1),nsmall=1)}"
+"0","tdot <- function(x) {format(x, big.mark = ""."",decimal.mark = "","")}"
+"0",""
+"0","grid.newpage()"

@@ -1,0 +1,32 @@
+"0","knitr::opts_chunk$set(message = FALSE,warning = FALSE)"
+"0",""
+"0","library(sf)"
+"0","library(tidyverse)"
+"0","library(patchwork)"
+"0","library(tabulizer)"
+"0","library(data.table)"
+"2","Registered S3 method overwritten by 'data.table':
+  method           from
+  print.data.table     
+"
+"2","data.table 1.14.0 using 4 threads (see ?getDTthreads).  Latest news: r-datatable.com
+"
+"2","
+Vedhæfter pakke: ‘data.table’
+
+"
+"2","De følgende objekter er maskerede fra ‘package:dplyr’:
+
+    between, first, last
+
+"
+"2","Det følgende objekt er maskeret fra ‘package:purrr’:
+
+    transpose
+
+"
+"0","library(statsDK)"
+"0","library(RColorBrewer)"
+"0","library(rmapshaper)"
+"0",""
+"0","t <- Sys.time()"

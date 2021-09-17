@@ -3,7 +3,7 @@
 
 # dagir - Danmarks Administrative Geografiske Inddeling i R
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dagir)](https://cran.r-project.org/package=dagir)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dagirlite)](https://cran.r-project.org/package=dagirlite)
 
 Hovedfunktionen for dagir er at stille tilgængeligt komprimerede
 geospatielle datasæt fra DAGI som er sammenkoblet med data fra Danmarks
@@ -19,7 +19,10 @@ inddelinger.
 
 ## Installation
 
-dagir kan installeres gennem github
+dagir er tilgængelig gennem CRAN hvor pakken hedder dagirlite. Dette
+grundet et 5mb loft over pakkestørrelser gør at ikke alle kort er
+inkluderet her. Den fulde pakke kan kan installeres fra github med
+følgende kode:
 
 ``` r
 devtools::install_github("LarsHernandez/dagir")
@@ -122,7 +125,6 @@ Med `sf` pakken er det muligt at tælle punkterne i hvert område.
 ``` r
 library(sf)
 #> Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1
-
 benches_st <- st_as_sf(benches, coords = c("lon", "lat"), crs = 4326, agr = "constant")
 
 geo$pt_count <- lengths(st_intersects(geo, benches_st))
