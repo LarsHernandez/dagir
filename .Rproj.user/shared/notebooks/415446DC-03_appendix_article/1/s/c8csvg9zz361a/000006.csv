@@ -1,4 +1,0 @@
-"0","ggsave(ap9, file=""ap9.png"", height = 11.5, width=10, dpi=600)"
-"0","ggsave(ap9, file=""ap9.pdf"", height = 11.5, width=10, dpi=600)"
-"0",""
-"0","dfx <- df"

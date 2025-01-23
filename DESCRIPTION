@@ -9,7 +9,7 @@ Description: Data saved as SF objects to plot with ggplot
     data on population age and gender has been addded to regioner, kommuner and sogne.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     rmarkdown,
     testthat (>= 2.1.0)

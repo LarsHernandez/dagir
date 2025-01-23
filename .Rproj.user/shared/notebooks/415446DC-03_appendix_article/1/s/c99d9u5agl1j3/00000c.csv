@@ -1,2 +1,0 @@
-"0","         "
-"0","(b1 <- boxGrob(paste(""No missing BMI measurements"", pnt(data_bmi_1)), x=.75, y=.70, box_gp = gp, width = .35, height=.16))"

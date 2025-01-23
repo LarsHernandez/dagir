@@ -1,0 +1,666 @@
+---
+title: "Geospatial data analysis in R"
+title-slide-attributes:
+  data-background-image: "DK0.png" 
+  data-background-size: "contain" 
+  data-background-position: "bottom left" 
+  data-background-opacity: "1" 
+format:
+  revealjs: 
+    width: 2400
+    height: 1400    
+    margin: 0.1
+    slide-number: h.v
+    code-line-numbers: false
+    center: false
+author:
+  - name: Lars Hernández Nielsen
+    orcid: 0000-0002-3715-8528
+    email: l.boerty@rn.dk | laboni@dcm.aau.dk
+    affiliations: Assistant professor - Center for Danish Health Services Research
+date: last-modified
+chalkboard: false
+include-in-header:
+  text: |
+    <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 20px 0 20px 0;
+    }
+    </style>
+---
+
+## Introduction
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      cache = TRUE,
+                      fig.dpi = 500, 
+                      fig.height = 8, 
+                      fig.width = 10)
+options(width = 150, scipen = 99)
+library(patchwork)
+```
+
+- Background
+  - MSc - Economics - AAU
+  - PhD - Epidemiology / Health Economics - Department of Hematology / CLINDA
+  - Asst Prof - Danish Center for Health Services Research
+
+- Geospatial data interest
+  - Side project during PhD
+  - Usefull in epidemiology
+  - Nice plots
+
+R Libraries:
+
+```{r}
+library(tidyverse)
+library(sf)
+library(dagir)
+```
+
+## DAWA - DAGI
+
+![](dagi.png)
+
+
+## Geospatial data for Denmark
+
+Easy way to work with geospatial data in R is using the library `SF`. This package represents data (simple features) as records in a `data.frame` or `tibble` with a geometry list-column and some additinoal attributes
+
+```{r}
+geo_kommuner_raw <- sf::read_sf("https://api.dataforsyningen.dk/kommuner/?format=geojson")
+```
+
+::: {.fragment}
+
+`read_sf` takes geojson and converts it to the sf class
+
+```{r}
+class(geo_kommuner_raw)
+```
+
+:::
+
+## SF object
+
+```{r}
+head(geo_kommuner_raw)
+```
+
+
+## Plotting SF object
+
+```{r fig.height=7, fig.width=8}
+ggplot() +
+  geom_sf(data = geo_kommuner_raw)
+```
+
+## Plotting SF object
+
+```{r fig.height=7,fig.width=12}
+ggplot() +
+  geom_sf(data = geo_kommuner_raw) + 
+  coord_sf(xlim = c(12.55, 12.65), ylim = c(55.67, 55.70))
+```
+
+## Additional data
+
+```{r}
+SOGN1 <- statsDK::sdk_retrieve_data("SOGN1", Tid = "2024")
+
+head(sample_n(SOGN1, 5))
+```
+
+##  Dagir
+
+Simple package `dagir` to solve 2 minor annoyances
+ 
+ - Raw geojson are too detailed
+ - Data on background population
+
+Can be installed fromn Github
+
+```{r, eval = FALSE}
+devtools::install_github("LarsHernandez/dagir")
+```
+
+A more compressed package `dagirlite` is on CRAN (max 5mb)
+
+## Dagir
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+```{r}
+library(dagir)
+
+data(geo_sogne)
+data(geo_regioner)
+data(geo_kommuner)
+data(geo_postnumre)
+data(geo_opstillingskredse)
+data(geo_afstemningsomraader)
+data(geo_landsdele)
+data(geo_politikredse)    
+data(geo_retskredse)
+```
+
+Comparison of size
+
+```{r}
+object.size(geo_kommuner_raw)
+object.size(geo_kommuner)
+```
+
+:::
+
+::: {.column width="60%"}
+
+```{r echo=FALSE, fig.height=8.8, fig.width=10, message=FALSE, warning=FALSE}
+data(geo_sogne)
+data(geo_regioner)
+data(geo_kommuner)
+data(geo_postnumre)
+data(geo_opstillingskredse)
+data(geo_afstemningsomraader)
+data(geo_landsdele)
+data(geo_politikredse)    
+data(geo_retskredse)
+
+p1 <- ggplot() +
+  geom_sf(data = geo_regioner, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Regioner (N=5)")
+p2 <- ggplot() +
+  geom_sf(data = geo_kommuner, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Kommuner (N=99)")
+p3 <- ggplot() +
+  geom_sf(data = geo_sogne, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Sogne (N=2141)")
+p5 <- ggplot() +
+  geom_sf(data = geo_landsdele, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Landsdele (N=11)")
+p4 <- ggplot() +
+  geom_sf(data = geo_postnumre, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Postnumre (N=1069)")
+p6 <- ggplot() +
+  geom_sf(data = geo_opstillingskredse, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Opstillingskredse 1km (N=92)")
+p7 <- ggplot() +
+  geom_sf(data = geo_afstemningsomraader, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Afstemningsomraader (N=1383)")
+p8 <- ggplot() +
+  geom_sf(data = geo_politikredse, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Politikredse (N=12)")
+p9 <- ggplot() +
+  geom_sf(data = geo_retskredse, color = "white", fill = "grey30", size = 0.05) + 
+  theme_void() + labs(title = "Retskredse (N=24)")
+
+p1 + p2 + p3 + p5 + p6 + p7 + p8 + p9 + p4
+```
+
+:::
+
+::::
+
+
+## Dagir
+
+```{r echo=TRUE}
+data(geo_kommuner)
+
+ggplot() +
+  geom_sf(data = geo_kommuner, color = "white", fill = "grey", size = 0.05) + 
+  theme_void()
+```
+
+
+## Projections
+
+SF as standard uses the WGS 84 (World Geodetic System 1984) projection also known as web mercator
+
+```{r fig.height=6, fig.width=14}
+geo_kommuner_3035 <- st_transform(geo_kommuner, 'EPSG:3035')
+
+ggplot() + geom_sf(data = geo_kommuner)      + labs(title="EPSG:4326 (WGS 84)") +
+ggplot() + geom_sf(data = geo_kommuner_3035) + labs(title="EPSG:3035")
+```
+
+
+## Centroids
+
+Centroids are usefull in adding labels, or translating between spatial levels
+
+```{r}
+data(geo_regioner)
+
+ggplot(data = geo_regioner) +
+  geom_sf(color = "white", fill = "grey30", size = 0.05) + 
+  geom_label(aes(label = navn, x = visueltcenter_x, y = visueltcenter_y))+
+  theme_void() 
+```
+
+
+
+## Plotting features
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+ggplot() +
+  geom_sf(data = geo_kommuner, aes(fill = population), color = NA) + 
+  theme_void()
+```
+::: 
+::: {.column width="50%"  .fragment}
+```{r}
+ggplot() +
+  geom_sf(data = geo_kommuner, aes(fill = avg_age), color = NA) + 
+  scale_fill_viridis_b() +
+  theme_void()
+```
+::: 
+::::
+
+## Subsetting SF 
+
+Subsetting or excluding areas can be done directly in the data.frame
+
+```{r fig.height=6, fig.width=8}
+#| output-location: column
+#| results: hold
+
+data(geo_sogne)
+
+geo_kbh <- geo_sogne |> filter(area == "København Municipality")
+
+ggplot() +
+  geom_sf(data = geo_kbh, aes(fill = avg_age), color = NA) + 
+  scale_fill_viridis_b() +
+  theme_void()
+
+```
+
+## Subsetting SF 
+
+The map can also be subset by clipping geoms using `coord_sf`
+
+```{r fig.height=6, fig.width=8}
+#| output-location: column
+#| results: hold
+
+ggplot() +
+  geom_sf(data = geo_sogne, aes(fill = avg_age), color = "white") + 
+  scale_fill_viridis_c(limits = c(30, 45)) +
+  theme_void() + 
+  coord_sf(xlim = c(12.4, 12.7), ylim = c(55.56, 55.73))
+```
+
+## Pivoting SF
+
+```{r fig.height=5, fig.width=10}
+geo_long <- geo_kbh |> pivot_longer(cols = c("men", "women"), names_to = "Gender", values_to = "n")
+```
+
+When the SF package is loaded things like pivoting sf data is easy using `tidyr::pivot_longer`
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+geo_kbh |> select(navn, men, women) |> st_drop_geometry() |> head()
+```
+::: 
+::: {.column width="50%"}
+```{r}
+geo_long |> select(navn, Gender, n) |> st_drop_geometry() |> head()
+```
+::: 
+::::
+
+## Pivoting SF
+
+```{r fig.height=5, fig.width=10}
+ggplot() +
+  geom_sf(data = geo_long, aes(fill = n), color = NA) + 
+  facet_wrap(~ Gender)
+```
+
+
+
+
+
+
+## Working with coordinates
+
+```{r}
+load(url("https://github.com/sebastianbarfort/mapDK/blob/master/data/benches.rda?raw=true"))
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+Points are easy to include
+
+```{r}
+head(benches)
+```
+
+::: {.fragment}
+
+```{r eval=FALSE}
+ggplot() +
+  geom_sf(data = geo_kbh, color = "white", fill = "grey30", size = 0.05) + 
+  geom_point(data = benches, aes(lon, lat), color = "cornflowerblue", 
+             size = 0.5) +
+  theme_void() 
+```
+
+:::
+
+:::
+::: {.column width="50%" .fragment}
+```{r fig.height=8, fig.width=10, echo=FALSE}
+ggplot() +
+  geom_sf(data = geo_kbh, color = "white", fill = "grey30", size = 0.05) + 
+  geom_point(data = benches, aes(lon, lat), color = "cornflowerblue", 
+             size = 0.5) +
+  theme_void() 
+```
+:::
+::::
+
+## Working with coordinates
+
+:::: {.columns}
+::: {.column width="50%"}
+
+It's also easy to count all points within geoms
+
+```{r}
+benches_st <- st_as_sf(benches, coords = c("lon", "lat"), 
+                       crs = 4326, agr = "constant")
+
+st_intersects(geo_kbh, benches_st)
+
+geo_kbh$pt_count <- lengths(st_intersects(geo_kbh, benches_st))
+```
+
+
+```{r}
+#| eval: false
+#| include: true
+ggplot(data = geo_kbh) +
+  geom_sf(color = "white", aes(fill = pt_count), size = 0.05) + 
+  geom_text(aes(label = pt_count, x = visueltcenter_x, y = visueltcenter_y), color = "white")+
+  theme_void() 
+```
+
+:::
+
+::: {.column width="50%"}
+```{r fig.height=8, fig.width=10, echo=FALSE}
+ggplot(data = geo_kbh) +
+  geom_sf(color = "white", aes(fill = pt_count), size = 0.05) + 
+  geom_text(aes(label = pt_count, x = visueltcenter_x, y = visueltcenter_y), color = "white")+
+  theme_void() 
+```
+
+:::
+::::
+
+
+## Adjacency matrix
+
+```{r}
+nbs <- + st_intersects(geo_kommuner, geo_kommuner, sparse = FALSE)
+
+nbs[1:15,1:15]
+```
+
+
+## Adjacency matrix
+
+```{r}
+ggraph::ggraph(tidygraph::as_tbl_graph(+st_intersects(geo_sogne, geo_sogne, sparse = FALSE)), geo_sogne |> mutate(x = visueltcenter_x, y = visueltcenter_y)) + 
+  geom_sf(data = geo_sogne, fill = NA, color = "grey") + ggraph::geom_edge_link(edge_width = 0.1) + theme_void()
+```
+
+
+## Calculating size
+
+Using SF functions it is easy to calculate size of the geometri
+
+```{r}
+geo_sogne$area_m2 <- st_area(geo_sogne)
+
+temp <- geo_sogne |> select(navn, kode, area_m2) |> st_drop_geometry() |> arrange(area_m2)
+```
+
+Top and bottom parrish by size
+
+:::: {.columns}
+
+::: {.column}
+```{r}
+temp |> head()
+```
+:::
+
+::: {.column}
+```{r}
+temp |> tail()
+```
+:::
+
+::::
+
+## Calculating size
+
+```{r}
+geo_aa <- geo_sogne |> filter(area == "Aalborg Municipality")
+geo_aa$area <- as.numeric(st_area(geo_aa) / 1000000)
+
+ggplot(data = geo_aa) +
+  geom_sf(color = "white", aes(fill = area), size = 0.05) + 
+  geom_text(aes(label = round(area, 1), x = visueltcenter_x, y = visueltcenter_y), color = "white", size = 4)+
+  labs(fill = "Km\U00B2") + theme_void() 
+```
+
+
+
+
+
+## Grouped operations
+
+New healthcare reform 2024 in Denmark
+
+```{r}
+#| include: false
+data(geo_kommuner)
+
+geo_kommuner <- geo_kommuner |> 
+  mutate(kode_n = as.numeric(kode),
+         sundreg = case_when(kode_n %in% c(860, 810, 825, 813)                ~ "Vendsyssel",
+                             kode_n %in% c(851, 820, 849, 840, 773, 787, 846) ~ "Limfjorden",
+                             kode_n %in% c(730, 710, 707, 706)                ~ "Kronjylland",
+                             kode_n %in% c(766, 615, 727, 746)                ~ "Horsens",
+                             kode_n %in% c(751, 741)                          ~ "Aarhus",
+                             kode_n %in% c(657, 661, 756, 665, 760, 671)      ~ "Vestjylland",
+                             kode_n %in% c(740, 791, 779)                     ~ "Midt",
+                             kode_n %in% c(461, 420, 430, 480, 440, 492, 482, 479, 450) ~ "Fyn",
+                             kode_n %in% c(410, 630, 607, 621)                ~ "Trekantsområdet",
+                             kode_n %in% c(563, 561, 573, 575, 530)           ~ "Sydvestjylland",
+                             kode_n %in% c(510, 540, 550, 580)                ~ "Sønderjylland",
+                             kode_n %in% c(101, 147, 400, 411)                ~ "Hovedstaden",
+                             kode_n %in% c(167, 185, 155, 165, 153, 161, 169, 183, 187) ~ "Hovedstaden Syd og Vest",
+                             kode_n %in% c(163, 151, 157, 159, 173, 175, 240, 190, 230) ~ "Hovedstaden Nord",
+                             kode_n %in% c(219, 201, 210, 250, 260, 270, 217, 223) ~ "Nordsjælland",
+                             kode_n %in% c(253, 259,265,269,336,320,390,376,360) ~ "Østsjælland og øerne",
+                             kode_n %in% c(330,316,370,329,340,306,326,350)   ~ "Midt- og Vestsjælland",
+                             TRUE ~ "unknown"))
+
+```
+
+```{r}
+geo_sund <- geo_kommuner |> 
+  group_by(sundreg) |> 
+  summarize(population_sund = sum(population), 
+            visueltcenter_x = mean(visueltcenter_x),
+            visueltcenter_y = mean(visueltcenter_y))
+
+print(geo_sund,n = 6)
+```
+
+## Grouped operations
+
+```{r}
+geo_sund |> ggplot() + 
+  geom_sf(color = "black") + 
+  geom_label(aes(label = sundreg, x = visueltcenter_x, y = visueltcenter_y)) + theme_void()
+```
+
+
+
+## Moving geoms
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+```{r}
+#| message: true
+#| warning: true
+
+geo_sogne_holm <- geo_sogne |> filter(area == "Bornholm Municipality")
+```
+
+
+```{r}
+geo_sogne_holm$geometry <- geo_sogne_holm$geometry + c(-2.5, 2)
+```
+
+
+```{r}
+geo_sogne_holm <- st_set_crs(geo_sogne_holm, "+proj=longlat +datum=WGS84 +no_defs")
+```
+
+
+
+```{r}
+#| message: true
+#| warning: true
+
+geo_new <- rbind(geo_sogne_holm, geo_sogne |> 
+                   filter(area != "Bornholm Municipality")) |> 
+  st_crop(xmax = 13, xmin = 8.07251, ymin = 54.55909, ymax = 57.75256)
+```
+:::
+::: {.column width="40%" .fragment}
+
+```{r}
+#| fig-height: 7.8
+#| fig-width: 6
+geo_new |> ggplot() + geom_sf()
+```
+
+:::
+::::
+
+## Old municipalities
+
+```{r}
+data(geo_f07)
+
+ggplot(data = geo_f07) +
+  geom_sf(color = "grey30", fill = "white", size = 0.05) + 
+  theme_void() 
+```
+
+## Shapefile format
+
+Many sources of interesting spatial data
+
+```{r}
+#| eval: false
+#| include: true
+
+geo_fields <- st_read(dsn = "./fields", layer = "Marker_2019_CVR")
+```
+
+```{r}
+#| eval: false
+#| include: true
+
+geo_fields
+```
+
+## Shapefile format
+
+```{r}
+#| eval: false
+#| include: true
+
+ggplot() +
+  geom_sf(data = geo_fields, color = NA, fill = "grey40", size = 0.05)
+```
+
+## Shapefile format
+
+```{r}
+#| eval: false
+#| include: true
+#| fig-height: 7
+#| fig-width: 19
+
+geo_fields |> 
+  filter(AFGROEDE %in% c("Jordbær", "Juletræer og pyntegrønt på landbrugsjord", "Vinterraps")) |> 
+  ggplot() + 
+  geom_sf(data = geo_regioner, fill = "grey60", color = NA)+
+  geom_sf(aes(color = AFGROEDE), fill = NA, show.legend = F) + 
+  scale_color_manual(values = c("red","green","yellow"))+
+  facet_wrap(~ AFGROEDE) + theme_void()
+```
+
+
+## GIF with gganimate
+
+```{r eval=FALSE, include=TRUE}
+library(gganimate)
+
+geo_kbh2 <- rbind(geo_kbh |> mutate(ss = 1), geo_kbh |> mutate(ss = 2, geometry = sample(geometry)))
+
+p <- geo_kbh2 |>  
+  ggplot() +
+  geom_sf(color = "white", aes(fill = pt_count), size = 0.6, show.legend = F) + 
+  theme_void() +
+  transition_time(ss) +
+  ease_aes('linear')
+
+map_ani <- animate(p, nframes = 200, fps = 40, height = 8, width = 10, units = "in", res = 150, renderer = gifski_renderer())
+
+anim_save("map_ani.gif", map_ani)
+```
+
+## GIF with gganimate
+
+<div align="center">
+<iframe width="1500" height="1200" src="map_ani.gif"></iframe>
+</div>
+
+
+
+## Use - examples {.nostretch}
+
+![](aml.png){width=600px}
+
+
+
+
+
+
+
+

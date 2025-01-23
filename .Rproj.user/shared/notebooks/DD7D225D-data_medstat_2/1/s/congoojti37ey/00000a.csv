@@ -1,4 +1,0 @@
-"0","data %>% filter(sector==200) %>% "
-"0","  group_by(year) %>% "
-"0","  summarize(sum = sum(cost_adj, na.rm=T)*0.8) %>% "
-"0","  arrange(desc(sum))"

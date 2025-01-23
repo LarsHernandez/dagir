@@ -1,1 +1,0 @@
-"0","(b3 <- boxGrob(paste(""No patients starting after 2016-12-31"",   pnt(data_bmi_3)), x=.75, y=.30, box_gp = gp, width = .35, height=.16))"

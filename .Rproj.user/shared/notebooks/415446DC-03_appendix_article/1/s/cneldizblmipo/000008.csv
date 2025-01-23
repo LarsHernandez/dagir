@@ -1,6 +1,0 @@
-"0","tab <- mssg %>% group_by(cdiag) %>% summarize(Group=first(grp),N=n()) %>% arrange(desc(N)) %>% rename(""Cancer diagnose""=""cdiag"")"
-"0",""
-"0","cbind(tab[1:17,],tab[18:34,],tab[35:51,],tab[52:68,]) %>% "
-"0","  kable() %>%"
-"0","  kable_styling(bootstrap_options = c(""condensed"", ""bordered""), font_size = 6, full_width = F) %>% "
-"0","  column_spec(c(4:6,10:12),background = ""#FAFAFA"")"

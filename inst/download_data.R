@@ -26,7 +26,7 @@ geo_menighedsraadsafstemningsomraader <- sf::st_as_sf(rmapshaper::ms_simplify(ke
 geo_politikredse                      <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_politikredse_raw, 'Spatial')))
 geo_retskredse                        <- sf::st_as_sf(rmapshaper::ms_simplify(keep=0.02,input = as(geo_retskredse_raw, 'Spatial')))
 
-geo_sogne_high                             <- geo_sogne_high                             %>% rename(changed = ændret, geo_changed = geo_ændret)
+geo_sogne_high                        <- geo_sogne_high                             %>% rename(changed = ændret, geo_changed = geo_ændret)
 geo_regioner                          <- geo_regioner                          %>% rename(changed = ændret, geo_changed = geo_ændret)
 geo_kommuner                          <- geo_kommuner                          %>% rename(changed = ændret, geo_changed = geo_ændret)
 geo_postnumre                         <- geo_postnumre                         %>% rename(changed = ændret, geo_changed = geo_ændret)
