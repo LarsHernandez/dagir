@@ -3,7 +3,7 @@
 
 # dagir - Danmarks Administrative Geografiske Inddeling i R
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dagirlite)](https://cran.r-project.org/package=dagirlite)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/dagirlite)](https://cran.r-project.org/package=dagirlite)
 
 Hovedfunktionen for dagir er at stille tilgængeligt komprimerede
 geospatielle datasæt fra DAGI som er sammenkoblet med data fra Danmarks
