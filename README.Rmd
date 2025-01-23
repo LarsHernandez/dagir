@@ -20,6 +20,10 @@ Hovedfunktionen for dagir er at stille tilgængeligt komprimerede geospatielle d
 
 Data er gemt som SF (Simplyfied Features) filer og nemt at arbejde med i R. Der er for inddelingerne region, kommue og sogne tilføjet data om populationen, køn og alder. Dette data kommer fra FOLK1A og SOGNE1 serierne. Denne type data er dog ikke tilgængelig for de andre inddelinger.
 
+## Slides 2025
+
+[UseR præsentation af dagir](https://html-preview.github.io/?url=https://github.com/LarsHernandez/dagir/blob/main/geo_useR_slides_2025_01_22/pres_useR.html#/title-slide)
+
 ## Installation
 
 dagir er tilgængelig gennem CRAN hvor pakken hedder dagirlite. Dette grundet et 5mb loft over pakkestørrelser gør at ikke alle kort er inkluderet her. Den fulde pakke kan kan installeres fra github med følgende kode: 

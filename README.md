@@ -3,7 +3,7 @@
 
 # dagir - Danmarks Administrative Geografiske Inddeling i R
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/dagirlite)](https://cran.r-project.org/package=dagirlite)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dagirlite)](https://cran.r-project.org/package=dagirlite)
 
 Hovedfunktionen for dagir er at stille tilgængeligt komprimerede
 geospatielle datasæt fra DAGI som er sammenkoblet med data fra Danmarks
@@ -16,6 +16,11 @@ R. Der er for inddelingerne region, kommue og sogne tilføjet data om
 populationen, køn og alder. Dette data kommer fra FOLK1A og SOGNE1
 serierne. Denne type data er dog ikke tilgængelig for de andre
 inddelinger.
+
+## Slides 2025
+
+[UseR præsentation af
+dagir](https://html-preview.github.io/?url=https://github.com/LarsHernandez/dagir/blob/main/geo_useR_slides_2025_01_22/pres_useR.html#/title-slide)
 
 ## Installation
 
@@ -124,7 +129,11 @@ Med `sf` pakken er det muligt at tælle punkterne i hvert område.
 
 ``` r
 library(sf)
-#> Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1
+#> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.3.1; sf_use_s2() is TRUE
+```
+
+``` r
+
 benches_st <- st_as_sf(benches, coords = c("lon", "lat"), crs = 4326, agr = "constant")
 
 geo$pt_count <- lengths(st_intersects(geo, benches_st))
@@ -144,6 +153,7 @@ f.eks. udregne antal bænke pr. km^2. Her er det gjort for Aalborg
 kommune
 
 ``` r
+
 geo <- subset(geo_sogne,subset = geo_sogne$area=="Aalborg Municipality")
 
 geo$area <- st_area(geo)/1000000
@@ -159,11 +169,11 @@ ggplot(data = geo) +
 
 Der er mange anvendelser af funktionerne i `sf` pakken. f.eks.
 
--   Tilskære postnumre kortet til kun at vise landkort med
-    `sf::st_intersection` samt et andet kort, f.eks. regioner.
--   Placere centroiden fra et kort i områder fra et andet. f.eks.
-    omregne data fra et type kort til et andet.
--   andet
+- Tilskære postnumre kortet til kun at vise landkort med
+  `sf::st_intersection` samt et andet kort, f.eks. regioner.
+- Placere centroiden fra et kort i områder fra et andet. f.eks. omregne
+  data fra et type kort til et andet.
+- andet
 
 Brugen af `ggplot` gør det også meget fleksibelt hvis man ønsker at
 animere sit kort. Det kan f.eks. gøres med `gganimate` som kan lave en
